@@ -23,5 +23,5 @@ This bot does not prevent going over the rate limits on any of the API's used.  
 | !catfact | <ul><li>[Displays A Random Cat Fact](https://drive.google.com/open?id=1ROXf4BPjuV4eIienPZdoX9A1_uoM_u0G)</li></ul> |
 | !help | <ul><li>[Displays All Possible Commands](https://drive.google.com/open?id=1KFvCh-7iYiJCj-HQUTskr0y6Jed8kNJS)</li></ul> |
 | !magic card name | <ul><li>[Displays Information About Given Magic Card](https://drive.google.com/open?id=18s0c8dpG0ZWzQ85qt2YFXJGSSdNeM7fE)</li></ul> |
-| !show location name | <ul><li>[Displays Information About Given TV Show](| !weather location name | <ul><li>[Displays Two Day Forecast From Given Location](https://drive.google.com/open?id=1A8DB341KJHoiaebGjkfFpE18vlRUXMur)</li></ul> |)</li></ul> |
+| !show location name | <ul><li>[Displays Information About Given TV Show](| !weather location name | <ul><li>[Displays Two Day Forecast From Given Location](https://drive.google.com/open?id=1A8DB341KJHoiaebGjkfFpE18vlRUXMur)</li></ul> |
 | !weather location name | <ul><li>[Displays Two Day Forecast From Given Location](https://drive.google.com/open?id=1A8DB341KJHoiaebGjkfFpE18vlRUXMur)</li></ul> |
