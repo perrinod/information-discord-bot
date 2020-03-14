@@ -1,9 +1,32 @@
 ﻿const fs = require('fs');
 const Discord = require('discord.js');
-const { prefix, token } = require('./config.json');
+const { prefix } = require('./config.json');
 const client = new Discord.Client();
+const ext = require('commander');
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+
+ext.
+    option('-k, --key-id <key_id>, Extension key ID').
+    parse(process.argv);
+
+const keyId = getOption('keyId', 'EXT_KEY_ID');
+
+function getOption(optionName, environmentName) {
+    const option = (() => {
+
+        if (ext[optionName]) {
+            return ext[optionName];
+        } else if (process.env[environmentName]) {
+            console.log(STRINGS[optionName + 'Env']);
+            return process.env[environmentName];
+        }
+        console.log(STRINGS[optionName + 'Missing']);
+        process.exit(1);
+    })();
+    console.log(`Using "${option}" for ${optionName}`);
+    return option;
+}
 
 console.log('StartUp');
 
@@ -41,4 +64,4 @@ client.on('message', message => {
     }
 });
 
-client.login(token);
+client.login(keyId);
