@@ -6,6 +6,12 @@ const ext = require('commander');
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
+const userCooldownMs = 5000;                // maximum input rate per user to prevent bot abuse
+const channelCooldownMs = 5000;             // maximum broadcast rate per channel
+const userCooldownClearIntervalMs = 60000;  // interval to reset our tracking object
+const channelCooldowns = {};                // rate limit compliance
+let userCooldowns = {};                     // spam prevention
+
 ext.
     option('-k, --key-id <key_id>, Extension key ID').
     parse(process.argv);
@@ -38,6 +44,7 @@ for (const file of commandFiles) {
 
 client.once('ready', () => {
     console.log('Ready!');
+    setInterval(() => { userCooldowns = {}; }, userCooldownClearIntervalMs);
 });
 
 client.on('message', message => {
@@ -45,23 +52,51 @@ client.on('message', message => {
 
     if (message.content.startsWith(prefix)) {
 
+        const now = Date.now();
+        const cooldown = channelCooldowns[message.channel.id];
+
+        if (userIsInCooldown(message.author.id)) {
+            message.author.send('Error too many requests by user, try again in ' + ((userCooldowns[message.author.id] - now) / 1000) + ' seconds');
+            return;
+        }
+
         const args = message.content.slice(prefix.length).split(/ +/);
         const commandName = args.shift().toLowerCase();
 
         if (!client.commands.has(commandName)) {
-            message.reply(`${commandName} command does not exist`);
+            message.author.send(`${commandName} command does not exist`);
             return;
         }
 
         const command = client.commands.get(commandName);
 
         try {
-            command.execute(message, args);
+            if (!cooldown || cooldown.time < now) {
+                command.execute(message, args);
+                channelCooldowns[message.channel.id] = { time: now + channelCooldownMs };
+            } else if (!cooldown.trigger) {
+                cooldown.trigger = setTimeout(command.execute, cooldown.time - now, message, args);
+                message.author.send('Error too many requests from channel, try again in ' + ((channelCooldowns[message.channel.id].time - now) / 1000) + ' seconds');
+            }
         } catch (error) {
             console.error(error);
-            message.reply('Error trying to execute that command');
+            message.author.send('Error trying to execute that command');
         }
     }
 });
+
+function userIsInCooldown(userId) {
+    // Check if the user is in cool-down.
+    const cooldown = userCooldowns[userId];
+    const now = Date.now();
+
+    if (cooldown && cooldown > now) {
+        return true;
+    }
+
+    userCooldowns[userId] = now + userCooldownMs;
+    return false;
+}
+
 
 client.login(keyId);
